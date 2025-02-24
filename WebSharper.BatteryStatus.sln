@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35527.113 d17.12
+VisualStudioVersion = 17.12.35527.113
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "WebSharper.BatteryStatus", "WebSharper.BatteryStatus\WebSharper.BatteryStatus.fsproj", "{3922E77A-67A3-4531-B273-90A4972138CF}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "WebSharper.BatteryStatus.Sample", "WebSharper.BatteryStatus.Sample\WebSharper.BatteryStatus.Sample.fsproj", "{76807863-93EA-4EF1-8B67-56E584EE5E3C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{3922E77A-67A3-4531-B273-90A4972138CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3922E77A-67A3-4531-B273-90A4972138CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3922E77A-67A3-4531-B273-90A4972138CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{76807863-93EA-4EF1-8B67-56E584EE5E3C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76807863-93EA-4EF1-8B67-56E584EE5E3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76807863-93EA-4EF1-8B67-56E584EE5E3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76807863-93EA-4EF1-8B67-56E584EE5E3C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

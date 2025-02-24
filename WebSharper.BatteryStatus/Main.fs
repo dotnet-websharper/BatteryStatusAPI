@@ -17,13 +17,21 @@ module Definition =
             "level" =? T<float> 
 
             "onchargingchange" =@ T<unit> ^-> T<unit>
+            |> ObsoleteWithMessage "Use OnChargingChange instead"
             "onchargingchange" =@ T<Dom.Event> ^-> T<unit>
+            |> WithSourceName "OnChargingChange"
             "onchargingtimechange" =@ T<unit> ^-> T<unit>
+            |> ObsoleteWithMessage "Use OnChargingTimeChange instead"
             "onchargingtimechange" =@ T<Dom.Event> ^-> T<unit>
+            |> WithSourceName "OnChargingTimeChange"
             "ondischargingtimechange" =@ T<unit> ^-> T<unit>
+            |> ObsoleteWithMessage "Use OnDischargingTimeChange instead"
             "ondischargingtimechange" =@ T<Dom.Event> ^-> T<unit>
+            |> WithSourceName "OnDischargingTimeChange"
             "onlevelchange" =@ T<unit> ^-> T<unit>
+            |> ObsoleteWithMessage "Use OnLevelChange instead"
             "onlevelchange" =@ T<Dom.Event> ^-> T<unit>
+            |> WithSourceName "OnLevelChange"
         ]
 
     let Navigator =

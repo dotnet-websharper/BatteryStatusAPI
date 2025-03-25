@@ -7,6 +7,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "WebSharper.BatteryStatus", 
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "WebSharper.BatteryStatus.Sample", "WebSharper.BatteryStatus.Sample\WebSharper.BatteryStatus.Sample.fsproj", "{76807863-93EA-4EF1-8B67-56E584EE5E3C}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "WebSharper.BatteryStatus.Extensions", "WebSharper.BatteryStatus.Extensions\WebSharper.BatteryStatus.Extensions.fsproj", "{DED314C1-421D-4931-94E8-56A24696401F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,8 +23,15 @@ Global
 		{76807863-93EA-4EF1-8B67-56E584EE5E3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{76807863-93EA-4EF1-8B67-56E584EE5E3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{76807863-93EA-4EF1-8B67-56E584EE5E3C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DED314C1-421D-4931-94E8-56A24696401F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DED314C1-421D-4931-94E8-56A24696401F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DED314C1-421D-4931-94E8-56A24696401F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DED314C1-421D-4931-94E8-56A24696401F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CE44CB62-4B0C-4F34-BC4D-7C5855AA406F}
 	EndGlobalSection
 EndGlobal

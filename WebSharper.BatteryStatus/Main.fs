@@ -34,16 +34,9 @@ module Definition =
             |> WithSourceName "OnLevelChange"
         ]
 
-    let Navigator =
-        Class "Navigator"
-        |+> Instance [
-            "getBattery" => T<unit> ^-> T<Promise<_>>[BatteryManager] 
-        ]
-
     let Assembly =
         Assembly [
             Namespace "WebSharper.BatteryStatus" [
-                Navigator
                 BatteryManager
             ]
         ]

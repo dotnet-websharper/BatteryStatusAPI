@@ -27,7 +27,7 @@ module Client =
 
     let initializeBattery() =
         try 
-            let batteryPromise = As<Navigator>(JS.Window.Navigator).GetBattery()
+            let batteryPromise = JS.Window.Navigator.GetBattery()
             batteryPromise.Then(fun (battery: BatteryManager) ->
                 updateBatteryInfo battery
 

@@ -1,62 +1,38 @@
 # WebSharper Battery Status API Binding
 
-This repository provides an F# [WebSharper](https://websharper.com/) binding for the [Battery Status API](https://developer.mozilla.org/en-US/docs/Web/API/Battery_Status_API), enabling seamless access to battery information in WebSharper applications.
+[![NuGet](https://img.shields.io/nuget/v/WebSharper.BatteryStatus.svg)](https://www.nuget.org/packages/WebSharper.BatteryStatus)
 
-## Repository Structure
+This repository provides an F# [WebSharper](https://websharper.com/) binding for the [Battery Status API](https://developer.mozilla.org/en-US/docs/Web/API/Battery_Status_API), exposing battery charge level, charging state, and estimated charge/discharge times to WebSharper applications.
 
-The repository consists of two main projects:
+> **Browser support:** The Battery Status API is implemented in Chromium-based browsers. Some browsers restrict or remove it for privacy reasons — check [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Battery_Status_API) for the current compatibility matrix before relying on it in production.
 
-1. **Binding Project**:
+## Repository structure
 
-   - Contains the F# WebSharper binding for the Battery Status API.
+The repository contains three projects:
 
-2. **Sample Project**:
-   - Demonstrates how to use the Battery Status API with WebSharper syntax.
-   - Includes a GitHub Pages demo: [View Demo](https://dotnet-websharper.github.io/BatteryStatusAPI/).
+| Project | What it is |
+| --- | --- |
+| `WebSharper.BatteryStatus` | The WIG binding (`BatteryManager` class definition and extension registration). |
+| `WebSharper.BatteryStatus.Extensions` | Hand-written `[<Inline>]` code — currently the `Navigator.GetBattery()` extension method. |
+| `WebSharper.BatteryStatus.Sample` | An ASP.NET Core SPA that exercises the binding end to end. See [Running the test case](#running-the-test-case). |
+
+## Live demos
+
+- Binding sample (GitHub Pages): <https://dotnet-websharper.github.io/BatteryStatusAPI/>
+- Source: <https://github.com/dotnet-websharper/BatteryStatusAPI>
+- WebSharper bindings catalog: <https://websharper.com/bindings>
 
 ## Installation
 
-To use this package in your WebSharper project, add the NuGet package:
-
 ```bash
-   dotnet add package WebSharper.BatteryStatus
+dotnet add package WebSharper.BatteryStatus
 ```
 
-## Building
+## Usage
 
-### Prerequisites
+The binding surfaces the API as regular .NET types. `Navigator.GetBattery()` returns a `Promise<BatteryManager>`; the manager exposes `Level`, `Charging`, `ChargingTime`, and `DischargingTime`, plus the `on*` change events (`OnChargingChange`, `OnChargingTimeChange`, `OnDischargingTimeChange`, `OnLevelChange`) and the inherited `AddEventListener`.
 
-- [.NET SDK](https://dotnet.microsoft.com/download) installed on your machine.
-
-### Steps
-
-1. Clone the repository:
-
-   ```bash
-   git clone https://github.com/dotnet-websharper/BatteryStatus.git
-   cd BatteryStatus
-   ```
-
-2. Build the Binding Project:
-
-   ```bash
-   dotnet build WebSharper.BatteryStatus/WebSharper.BatteryStatus.fsproj
-   ```
-
-3. Build and Run the Sample Project:
-
-   ```bash
-   cd WebSharper.BatteryStatus.Sample
-   dotnet build
-   dotnet run
-   ```
-
-4. Open the hosted demo to see the Sample project in action:
-   [https://dotnet-websharper.github.io/BatteryStatusAPI/](https://dotnet-websharper.github.io/BatteryStatusAPI/)
-
-## Example Usage
-
-Below is an example of how to use the Battery Status API in a WebSharper project:
+A condensed version of the sample, which binds the battery summary to a reactive `Var`:
 
 ```fsharp
 namespace WebSharper.BatteryStatus.Sample
@@ -70,42 +46,44 @@ open WebSharper.BatteryStatus
 
 [<JavaScript>]
 module Client =
-    // The templates are loaded from the DOM, so you just can edit index.html
-    // and refresh your browser, no need to recompile unless you add or remove holes.
     type IndexTemplate = Template<"wwwroot/index.html", ClientLoad.FromDocument>
 
     let batteryStatus = Var.Create "Checking battery status..."
 
-    // Function to update battery status UI.
+    /// Formats a duration in seconds as minutes/hours, or "N/A" when the value is
+    /// not finite (the API reports Infinity when the estimate does not apply).
+    let formatDuration (seconds: float) =
+        if seconds > 0.0 && seconds < 1e12 then
+            let minutes = seconds / 60.0
+            if minutes >= 60.0 then sprintf "%.1fh" (minutes / 60.0)
+            else sprintf "%.0fm" minutes
+        else "N/A"
+
     let updateBatteryInfo (battery: BatteryManager) =
-        let batteryText =
-            sprintf "Battery Level: %d%%<br>Charging: %s<br>Time to Full Charge: %s<br>Time to Empty: %s"
+        let chargingText = if battery.Charging then "Yes ⚡" else "No"
+        batteryStatus.Value <-
+            sprintf "Battery Level: %d%% — Charging: %s — Time to Full Charge: %s — Time to Empty: %s"
                 (int (battery.Level * 100.0))
-                (if battery.Charging then "Yes ⚡" else "No")
-                (if battery.ChargingTime > 0.0 then sprintf "%fs" battery.ChargingTime else "N/A")
-                (if battery.DischargingTime > 0.0 then sprintf "%fs" battery.DischargingTime else "N/A")
+                chargingText
+                (formatDuration battery.ChargingTime)
+                (formatDuration battery.DischargingTime)
 
-        JS.Document.GetElementById("battery-status").InnerHTML <- batteryText
-
-    // Function to initialize battery API and listen for changes.
-    let initializeBattery() =
+    let initializeBattery () =
         try
-            let batteryPromise = JS.Window.Navigator.GetBattery()
-            batteryPromise.Then(fun (battery: BatteryManager) ->
+            JS.Window.Navigator.GetBattery().Then(fun (battery: BatteryManager) ->
                 updateBatteryInfo battery
 
-                battery.AddEventListener("levelchange", fun (event:Dom.Event) -> updateBatteryInfo battery)
-                battery.AddEventListener("chargingchange", fun (event:Dom.Event) -> updateBatteryInfo battery)
-                battery.AddEventListener("chargingtimechange", fun (event:Dom.Event) -> updateBatteryInfo battery)
-                battery.AddEventListener("dischargingtimechange", fun (event:Dom.Event) -> updateBatteryInfo battery)
-            ) |> ignore
-
+                battery.AddEventListener("levelchange", fun (_: Dom.Event) -> updateBatteryInfo battery)
+                battery.AddEventListener("chargingchange", fun (_: Dom.Event) -> updateBatteryInfo battery)
+                battery.AddEventListener("chargingtimechange", fun (_: Dom.Event) -> updateBatteryInfo battery)
+                battery.AddEventListener("dischargingtimechange", fun (_: Dom.Event) -> updateBatteryInfo battery)
+            )
+            |> ignore
         with error ->
-            batteryStatus.Value <- $"{error.Message}"
+            batteryStatus.Value <- error.Message
 
     [<SPAEntryPoint>]
     let Main () =
-
         initializeBattery()
 
         IndexTemplate.Main()
@@ -114,9 +92,38 @@ module Client =
         |> Doc.RunById "main"
 ```
 
-This example demonstrates how to retrieve and display battery status using the Battery Status API in a WebSharper project.
+## Running the test case
 
-## Important Considerations
+The sample doubles as the repository's test case. It covers:
 
-- **Limited Browser Support**: Some browsers may not fully support the Battery Status API; check [MDN Battery Status API](https://developer.mozilla.org/en-US/docs/Web/API/Battery_Status_API) for the latest compatibility information.
-- **Privacy Considerations**: Some browsers restrict access to the Battery API due to privacy concerns.
+- calling `Navigator.GetBattery()` and reading the resolved `BatteryManager`;
+- rendering `Level`, `Charging`, `ChargingTime`, and `DischargingTime` through a reactive `Var`;
+- refreshing the display on each of the four `*change` events via `AddEventListener`.
+
+Build and run it:
+
+```bash
+cd WebSharper.BatteryStatus.Sample
+dotnet run
+```
+
+Then open the URL printed in the console. The page shows the current battery summary and updates when the charge state changes. Note that some browsers (notably Safari and Firefox) do not implement the API; the sample reports the failure in the status line.
+
+## Building from source
+
+Prerequisites: [.NET SDK](https://dotnet.microsoft.com/download) 10.0 or later.
+
+```bash
+git clone https://github.com/dotnet-websharper/BatteryStatusAPI.git
+cd BatteryStatusAPI
+dotnet build WebSharper.BatteryStatus/WebSharper.BatteryStatus.fsproj
+dotnet build WebSharper.BatteryStatus.Sample/WebSharper.BatteryStatus.Sample.fsproj
+```
+
+## Deployment
+
+`.github/workflows/ghpages.yml` builds the sample in Release on every push to `main` and publishes `WebSharper.BatteryStatus.Sample/wwwroot` to GitHub Pages.
+
+## License
+
+Apache 2.0 — see the [WebSharper core repository](https://github.com/dotnet-websharper/core/blob/master/LICENSE.md).

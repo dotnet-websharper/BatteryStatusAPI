@@ -18,6 +18,12 @@ The repository contains three projects:
 
 ## Live demos
 
+**Try it live:** [Open the sample in your browser](https://dotnet-websharper.github.io/BatteryStatusAPI/)
+
+![Battery Status API sample](docs/sample.png)
+
+The sample doubles as the binding's [test case](#running-the-test-case): it reads the current battery state and reacts to change events.
+
 - Binding sample (GitHub Pages): <https://dotnet-websharper.github.io/BatteryStatusAPI/>
 - Source: <https://github.com/dotnet-websharper/BatteryStatusAPI>
 - WebSharper bindings catalog: <https://websharper.com/bindings>

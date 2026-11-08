@@ -14,16 +14,24 @@ module Client =
     type IndexTemplate = Template<"wwwroot/index.html", ClientLoad.FromDocument>
 
     let batteryStatus = Var.Create "Checking battery status..."
-    
-    let updateBatteryInfo (battery: BatteryManager) =
-        let batteryText = 
-            sprintf "Battery Level: %d%%<br>Charging: %s<br>Time to Full Charge: %s<br>Time to Empty: %s"
-                (int (battery.Level * 100.0))
-                (if battery.Charging then "Yes ⚡" else "No")
-                (if battery.ChargingTime > 0.0 then sprintf "%fs" battery.ChargingTime else "N/A")
-                (if battery.DischargingTime > 0.0 then sprintf "%fs" battery.DischargingTime else "N/A")
 
-        JS.Document.GetElementById("battery-status").InnerHTML <- batteryText
+    /// Formats a duration in seconds as minutes/hours, or "N/A" when the value is
+    /// not finite (the API reports Infinity when the estimate does not apply).
+    let formatDuration (seconds: float) =
+        if seconds > 0.0 && seconds < 1e12 then
+            let minutes = seconds / 60.0
+            if minutes >= 60.0 then sprintf "%.1fh" (minutes / 60.0)
+            else sprintf "%.0fm" minutes
+        else "N/A"
+
+    let updateBatteryInfo (battery: BatteryManager) =
+        let chargingText = if battery.Charging then "Yes ⚡" else "No"
+        batteryStatus.Value <-
+            sprintf "Battery Level: %d%% — Charging: %s — Time to Full Charge: %s — Time to Empty: %s"
+                (int (battery.Level * 100.0))
+                chargingText
+                (formatDuration battery.ChargingTime)
+                (formatDuration battery.DischargingTime)
 
     let initializeBattery() =
         try 

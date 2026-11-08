@@ -1,0 +1,22 @@
+type file
+id WebSharper.BatteryStatus
+authors
+    IntelliFactory
+owners
+    IntelliFactory
+repositoryType git
+repositoryUrl https://github.com/dotnet-websharper/BatteryStatusAPI/
+licenseUrl https://github.com/dotnet-websharper/BatteryStatusAPI/blob/main/LICENSE.md
+iconUrl https://github.com/dotnet-websharper/core/raw/websharper50/tools/WebSharper.png
+projectUrl https://github.com/dotnet-websharper/BatteryStatusAPI
+description
+    WebSharper bindings for BatteryStatus
+tags
+    Web JavaScript F# C#
+files
+    ../WebSharper.BatteryStatus.Extensions/bin/Release/netstandard2.0/WebSharper.BatteryStatus.Extensions.dll ==> lib/netstandard2.0
+    ../WebSharper.BatteryStatus.Extensions/bin/Release/netstandard2.0/WebSharper.BatteryStatus.Extensions.xml ==> lib/netstandard2.0
+    ../WebSharper.BatteryStatus/bin/Release/netstandard2.0/WebSharper.BatteryStatus.dll ==> lib/netstandard2.0
+    ../WebSharper.BatteryStatus/bin/Release/netstandard2.0/WebSharper.BatteryStatus.xml ==> lib/netstandard2.0
+dependencies
+        WebSharper ~> LOCKEDVERSION:[3]
